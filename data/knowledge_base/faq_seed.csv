@@ -1,0 +1,15 @@
+question,answer,category,team
+"How do I reset my account password?","Go to the login page, click 'Forgot password', enter your registered email, and follow the reset link sent to your inbox. If you don't receive it, check spam or contact support.",account,Customer Service
+"My payment was declined, what should I do?","Verify your card details and billing address. Try a different payment method or contact your bank. If the charge appears pending, it may take 3-5 business days to clear.",billing,Billing and Payments
+"The application crashes on startup","Try clearing the application cache, updating to the latest version, and checking system requirements. If it persists, send us the error log and your OS version.",technical,Technical Support
+"How do I export my data?","Navigate to Settings > Data > Export. You can download CSV or JSON exports. Large exports are emailed as a download link.",data,Product Support
+"Is my data encrypted?","Yes. All data is encrypted in transit (TLS 1.2+) and at rest (AES-256). Backups are encrypted and access is role-based.",security,IT Support
+"How do I add a team member?","An admin can invite members via Settings > Team > Invite. They will receive an email with a setup link valid for 72 hours.",account,Customer Service
+"The service is down, is there an outage?","Check the status page for real-time incident reports. You can also subscribe to outage notifications in your account settings.",outage,Service Outages and Maintenance
+"How do I request a refund?","Refunds are available within 30 days of purchase for unused subscriptions. Open a billing ticket referencing your invoice number and our team will process it.",billing,Billing and Payments
+"My invoice is incorrect","Provide your invoice number and describe the discrepancy. Billing corrections are typically resolved within 2 business days.",billing,Billing and Payments
+"How do I integrate the API?","Generate an API key in Settings > Developer, then follow the API documentation. Rate limits and webhook setup are described there.",integration,Technical Support
+"Can I change my subscription plan?","Yes, upgrades apply immediately and downgrades at the next billing cycle. Go to Settings > Billing > Plan.",billing,Billing and Payments
+"Two-factor authentication is not working","Ensure your device clock is synchronized, try a backup code, or re-enroll 2FA from Settings > Security. Contact support if locked out.",security,IT Support
+"How do I delete my account?","Account deletion is permanent. Go to Settings > Account > Delete and confirm via email. Data is purged within 30 days.",account,Customer Service
+"Where can I find release notes?","Release notes are published on the changelog page and announced via email for major versions.",documentation,Product Support

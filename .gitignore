@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# data & artifacts (large / regenerable)
+data/raw/**/*.csv
+data/processed/
+data/knowledge_base/faq_approved.csv
+data/knowledge_base/faq_suggestions.csv
+models/
+app_data.db
+reports/*.html
+
+# python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+nul

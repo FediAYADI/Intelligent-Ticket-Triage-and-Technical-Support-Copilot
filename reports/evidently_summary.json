@@ -1,0 +1,36 @@
+{
+  "reference_window": {
+    "rows": 8213,
+    "from": "2026-08-10 22:30:39.348516",
+    "to": "2026-10-12 18:30:39.348516"
+  },
+  "current_window": {
+    "rows": 3521,
+    "from": "2026-10-12 19:30:39.348516",
+    "to": "2026-11-08 21:30:39.348516"
+  },
+  "data_quality_reference": {
+    "rows": 8213,
+    "missing_subject_pct": 8.71,
+    "missing_body_pct": 0.0,
+    "empty_ticket_text_pct": 0.0,
+    "duplicate_text_pct": 0.0,
+    "invalid_urgency_pct": 0.0,
+    "invalid_team_pct": 0.0
+  },
+  "data_quality_current": {
+    "rows": 3521,
+    "missing_subject_pct": 8.66,
+    "missing_body_pct": 0.0,
+    "empty_ticket_text_pct": 0.0,
+    "duplicate_text_pct": 0.0,
+    "invalid_urgency_pct": 0.0,
+    "invalid_team_pct": 0.0
+  },
+  "embedding_drift": {
+    "centroid_drift": 0.0332,
+    "mean_nearest_reference_similarity": 0.7726,
+    "drift_detected": false
+  },
+  "evidently_html": "D:\\STUDY\\MLops\\Intelligent Ticket Triage and Technical Support Copilot\\reports\\evidently_drift_report.html"
+}

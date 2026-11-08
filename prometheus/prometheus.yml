@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "ticket-triage"
+    metrics_path: /metrics
+    static_configs:
+      # The Streamlit app / metrics server runs on the host at port 8000.
+      # Inside docker-compose this resolves via host.docker.internal.
+      - targets: ["host.docker.internal:8000"]

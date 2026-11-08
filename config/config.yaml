@@ -1,0 +1,91 @@
+# Global project configuration
+project:
+  name: "Intelligent Ticket Triage and Technical Support Copilot"
+  seed: 42
+
+paths:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  kb_dir: "data/knowledge_base"
+  models_dir: "models"
+  reports_dir: "reports"
+  data_file: "app_data.db"   # SQLite runtime store
+
+# --- Dataset ---
+dataset:
+  source: "Tobi-Bueck/customer-support-tickets"
+  source_url: "https://huggingface.co/datasets/Tobi-Bueck/customer-support-tickets"
+  license: "CC-BY-NC-4.0"
+  language_filter: "en"
+  max_tickets: 12000
+  # The source dataset has NO timestamps and NO sentiment labels.
+  # Timestamps are simulated (see simulate_timestamps) and sentiment is
+  # derived with a documented lexicon heuristic.
+  simulate_timestamps: true
+  simulate_timestamps_days: 90
+
+# --- Component 1: classification & routing ---
+classification:
+  model_name: "distilbert-base-uncased"
+  max_length: 256
+  batch_size: 32
+  epochs: 5
+  learning_rate: 3.0e-5
+  max_train_samples: 5000   # subsample for CPU training; set null for full data
+  learning_rate: 2.0e-5
+  confidence_threshold: 0.45     # below -> human review queue
+  device: "cpu"                   # set "cuda" if a GPU torch build is installed
+  label_columns: ["ticket_type", "priority", "sentiment", "queue"]
+
+routing:
+  # priority score = w_urgency*urgency + w_sentiment*frustration + w_load*workload
+  weights:
+    urgency: 0.5
+    sentiment: 0.3
+    workload: 0.2
+  urgency_scores: {low: 0.2, medium: 0.5, high: 0.8, critical: 1.0}
+  # simulated team capacity (tickets/hour) used for workload balancing
+  team_capacity:
+    "Technical Support": 8
+    "Product Support": 6
+    "Customer Service": 10
+    "IT Support": 5
+    "Billing and Payments": 6
+    "Returns and Exchanges": 4
+    "Service Outages and Maintenance": 3
+    "Sales and Pre-Sales": 5
+    "Human Resources": 2
+    "General Inquiry": 4
+
+# --- Component 2: RAG copilot ---
+rag:
+  embedding_model: "all-MiniLM-L6-v2"
+  top_k: 5
+  min_similarity: 0.30           # below -> "insufficient information"
+  index_type: "faiss"            # faiss | chroma
+  # LLM backend: "extractive" runs fully on CPU (no GPU needed).
+  # Set to "hf" + model_name to use a generative model if hardware permits.
+  llm_backend: "extractive"
+  llm_model_name: "microsoft/Phi-3.5-mini-instruct"   # used only if backend=hf
+  max_new_tokens: 256
+  faq_gap_min_cluster_size: 3    # min similar uncovered questions to suggest FAQ
+  faq_gap_similarity: 0.55
+  faq_gap_cluster_distance: 0.60   # cosine distance radius for grouping questions
+
+# --- Component 3: anomaly detection ---
+anomaly:
+  embedding_model: "all-MiniLM-L6-v2"
+  n_clusters: 12
+  # a bucket (category x hour) is anomalous if its volume z-score exceeds this
+  zscore_threshold: 2.5
+  min_bucket_volume: 8
+  alert_cooldown_hours: 6
+
+# --- MLOps ---
+monitoring:
+  prometheus_port: 8000
+  evidently_report_path: "reports/evidently_drift_report.html"
+  grafana_url: "http://localhost:3000"
+
+streamlit:
+  port: 8501

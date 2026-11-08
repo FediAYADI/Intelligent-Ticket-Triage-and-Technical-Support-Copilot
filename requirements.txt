@@ -1,0 +1,30 @@
+# Core
+numpy>=1.26
+pandas>=2.0
+scikit-learn>=1.4
+matplotlib>=3.7
+
+# Big data
+pyspark==3.5.3
+
+# Deep learning / NLP
+torch>=2.1
+transformers>=4.40
+sentence-transformers>=2.7
+faiss-cpu>=1.7
+
+# RAG / LLM (optional generative backend)
+langchain-core>=0.1
+
+# Monitoring
+prometheus_client>=0.19
+evidently>=0.4
+
+# UI
+streamlit>=1.30
+
+# Workflow (install separately; heavy)
+# apache-airflow>=2.8
+
+# Tests
+pytest>=8.0

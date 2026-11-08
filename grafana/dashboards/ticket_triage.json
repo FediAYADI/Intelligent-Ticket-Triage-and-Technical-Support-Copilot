@@ -1,0 +1,59 @@
+{
+  "title": "Ticket Triage & Copilot",
+  "uid": "ticket-triage",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": {"from": "now-7d", "to": "now"},
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "Total tickets",
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "targets": [{"expr": "sum(tickets_total)", "refId": "A"}]
+    },
+    {
+      "id": 2, "type": "stat", "title": "Human-review queue",
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0},
+      "targets": [{"expr": "sum(tickets_human_review_total)", "refId": "A"}]
+    },
+    {
+      "id": 3, "type": "stat", "title": "Incorrect routing rate",
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0},
+      "targets": [{"expr": "sum(rate(routing_errors_total[1h])) / sum(rate(tickets_total[1h]))", "refId": "A"}]
+    },
+    {
+      "id": 4, "type": "stat", "title": "Copilot adoption (accepted)",
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0},
+      "targets": [{"expr": "sum(rate(copilot_suggestions_total{action=\"accepted\"}[1h])) / sum(rate(copilot_suggestions_total[1h]))", "refId": "A"}]
+    },
+    {
+      "id": 5, "type": "timeseries", "title": "Tickets by category (ticket_type)",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "targets": [{"expr": "sum by (urgency) (increase(tickets_total[1h]))", "legendFormat": "{{urgency}}", "refId": "A"}]
+    },
+    {
+      "id": 6, "type": "piechart", "title": "Ticket distribution by urgency",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "targets": [{"expr": "sum by (urgency) (tickets_total)", "legendFormat": "{{urgency}}", "refId": "A"}]
+    },
+    {
+      "id": 7, "type": "timeseries", "title": "Incident alerts by team",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+      "targets": [{"expr": "sum by (team) (increase(anomalies_detected_total[1h]))", "legendFormat": "{{team}}", "refId": "A"}]
+    },
+    {
+      "id": 8, "type": "timeseries", "title": "Processing latency (p95)",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+      "targets": [{"expr": "histogram_quantile(0.95, sum by (le) (rate(pipeline_latency_seconds_bucket[5m])))", "refId": "A"}]
+    },
+    {
+      "id": 9, "type": "timeseries", "title": "LLM token usage",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+      "targets": [{"expr": "sum by (model) (rate(llm_tokens_total[1h]))", "legendFormat": "{{model}}", "refId": "A"}]
+    },
+    {
+      "id": 10, "type": "timeseries", "title": "Active tickets per team",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20},
+      "targets": [{"expr": "active_tickets", "legendFormat": "{{team}}", "refId": "A"}]
+    }
+  ]
+}

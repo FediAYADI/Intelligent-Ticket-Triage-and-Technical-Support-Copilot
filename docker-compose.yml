@@ -1,0 +1,62 @@
+# Full-stack local deployment: Airflow + Prometheus + Grafana.
+# The Streamlit app and metrics endpoint run on the host (or add a service).
+#
+#   docker compose up -d
+#   Grafana:  http://localhost:3000  (admin/admin)
+#   Prometheus: http://localhost:9090
+#   Metrics endpoint expected at http://host.docker.internal:8000/metrics
+#
+# Note: on Linux replace host.docker.internal with the host IP or run the
+# metrics server in a container too.
+
+version: "3.9"
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: triage-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=15d"
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: triage-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+  airflow:
+    image: apache/airflow:2.8.1
+    container_name: triage-airflow
+    ports:
+      - "8080:8080"
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__API__AUTH_BACKENDS: "airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags:ro
+      - ../:/opt/ticket-triage:ro   # project code mounted read-only
+    command: bash -c "airflow db migrate && airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || true && airflow scheduler & airflow webserver"
+    depends_on:
+      - prometheus
+
+volumes:
+  prometheus-data:
+  grafana-data:
