@@ -39,14 +39,14 @@ Full details: `docs/dataset.md`.
 
 ## 3. Experiments & results
 
-### Classification (test split, DistilBERT, 3 epochs CPU baseline)
+### Classification (test split, DistilBERT, 5 epochs, 5k-sample CPU run)
 
 | Head | Accuracy | Macro F1 |
 |---|---|---|
-| ticket_type (4 classes) | 0.768 | 0.692 |
-| urgency (3 classes) | 0.447 | 0.330 |
-| sentiment (3 classes) | 0.883 | 0.873 |
-| team (10 classes) | 0.382 | 0.187 |
+| ticket_type (4 classes) | 0.789 | 0.770 |
+| urgency (3 classes) | 0.466 | 0.347 |
+| sentiment (3 classes) | 0.903 | 0.896 |
+| team (10 classes) | 0.406 | 0.244 |
 
 Per-class precision/recall/F1 and confusion matrices:
 `reports/classification_metrics.json`.
@@ -57,6 +57,15 @@ budget limited training. This is precisely why the confidence gate and the
 human-review queue exist: low-confidence routings are escalated rather than
 trusted. (A longer GPU run or class-balanced sampling would improve these;
 see Limitations.)
+
+**Confidence calibration caveat:** on this CPU-trained model the per-head
+softmax probabilities are under-confident and tightly distributed
+(mean ≈ 0.38). The aggregate confidence is the mean of the four head
+max-probabilities and the review threshold (0.38, ≈ median) was set on the
+validation distribution so roughly half of tickets auto-route and half are
+escalated — demonstrating the human-in-the-loop workflow. On a GPU-trained
+model, temperature scaling on the validation set is the recommended
+calibration step (noted as future work).
 
 ### RAG copilot
 

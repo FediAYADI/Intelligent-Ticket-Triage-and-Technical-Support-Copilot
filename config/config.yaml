@@ -33,7 +33,7 @@ classification:
   learning_rate: 3.0e-5
   max_train_samples: 5000   # subsample for CPU training; set null for full data
   learning_rate: 2.0e-5
-  confidence_threshold: 0.45     # below -> human review queue
+  confidence_threshold: 0.38      # below -> human review queue (mean head prob; calibrated on val dist.)
   device: "cpu"                   # set "cuda" if a GPU torch build is installed
   label_columns: ["ticket_type", "priority", "sentiment", "queue"]
 

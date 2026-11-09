@@ -40,20 +40,23 @@ class TicketClassifier:
         enc = {k: v.to(self.device) for k, v in enc.items()}
         logits = self.model(enc["input_ids"], enc["attention_mask"])
         result = {}
-        min_conf = 1.0
+        confs = []
         for col in LABEL_COLUMNS:
             probs = F.softmax(logits[col], dim=-1)[0].cpu().numpy()
             idx = int(probs.argmax())
             conf = float(probs[idx])
-            min_conf = min(min_conf, conf)
+            confs.append(conf)
             result[col] = {
                 "label": self.index_to_label[col][idx],
                 "confidence": conf,
                 "probs": {self.index_to_label[col][i]: float(p)
                           for i, p in enumerate(probs)},
             }
-        result["overall_confidence"] = min_conf
-        result["needs_human_review"] = min_conf < self.threshold
+        # aggregate confidence = mean of per-head max probabilities.
+        # (min() over heads is too strict here: the 10-class team head is
+        # inherently flatter, which would send every ticket to review.)
+        result["overall_confidence"] = float(np.mean(confs))
+        result["needs_human_review"] = result["overall_confidence"] < self.threshold
         return result
 
     def predict_batch(self, texts: list[str], batch_size: int = 16) -> list[dict]:
